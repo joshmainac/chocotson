@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getBoardRecord, subscribeBoard } from "@/lib/chocotson/board";
 import {
   confirmBooking,
   createBookingSession,
@@ -12,6 +13,10 @@ import {
   selectStep,
 } from "@/lib/chocotson/booking";
 import { getStepGroups, getStepsInGroup } from "@/lib/chocotson/catalog";
+import {
+  endConsultation,
+  startConsultation,
+} from "@/lib/chocotson/consultation";
 import { getConsultationDurationMinutes, getLandingCopy } from "@/lib/chocotson/copy";
 import { getAvailableSlots } from "@/lib/chocotson/slots";
 import type {
@@ -65,12 +70,19 @@ export default function ElderlyBookingApp() {
     createBookingSession(),
   );
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
+  const [, setBoardTick] = useState(0);
   const slots = useMemo(() => getAvailableSlots(new Date()), []);
   const slotsByDay = useMemo(() => groupSlotsByDay(slots), [slots]);
 
   const steps = session.selectedGroupId
     ? getStepsInGroup(session.selectedGroupId)
     : [];
+
+  useEffect(() => subscribeBoard(() => setBoardTick((tick) => tick + 1)), []);
+
+  const boardRecord = confirmation
+    ? getBoardRecord(confirmation.bookingId)
+    : undefined;
 
   return (
     <div className="min-h-full bg-[#f6f3ee] text-[#2b2b2b]">
@@ -244,6 +256,35 @@ export default function ElderlyBookingApp() {
             <p className="text-[#5c574f]">
               一度にひとつ。短い時間だけで大丈夫です。
             </p>
+            {boardRecord && !boardRecord.claimed ? (
+              <p className="max-w-md text-base text-[#5c574f]">
+                学生が受けたら、ここから相談を始められます。
+              </p>
+            ) : null}
+            {boardRecord?.claimed && boardRecord.consultationStatus === "idle" ? (
+              <button
+                type="button"
+                className="mt-2 inline-flex items-center rounded-md bg-[#2b2b2b] px-8 py-4 text-lg text-white shadow-[4px_4px_0_0_#c4a35a]"
+                onClick={() => startConsultation(confirmation.bookingId, "elderly")}
+              >
+                相談を始める
+              </button>
+            ) : null}
+            {boardRecord?.consultationStatus === "active" ? (
+              <>
+                <p className="text-lg text-[#5c574f]">相談中です</p>
+                <button
+                  type="button"
+                  className="mt-2 inline-flex items-center rounded-md bg-[#2b2b2b] px-8 py-4 text-lg text-white shadow-[4px_4px_0_0_#c4a35a]"
+                  onClick={() => endConsultation(confirmation.bookingId, "elderly")}
+                >
+                  終わりました
+                </button>
+              </>
+            ) : null}
+            {boardRecord?.consultationStatus === "ended" ? (
+              <p className="text-lg text-[#5c574f]">相談が終わりました</p>
+            ) : null}
           </section>
         ) : null}
       </main>

@@ -85,7 +85,7 @@ export function confirmBooking(session: BookingSession): Confirmation {
   if (!session.selectedStep || !session.selectedSlot) {
     throw new Error("step and slot are required to confirm");
   }
-  publishConfirmedBooking({
+  const published = publishConfirmedBooking({
     stepTitle: session.selectedStep.title,
     groupId: session.selectedStep.groupId,
     slotStart: session.selectedSlot.start,
@@ -93,6 +93,7 @@ export function confirmBooking(session: BookingSession): Confirmation {
   });
   return {
     accepted: true,
+    bookingId: published.id,
     stepTitle: session.selectedStep.title,
     slotStart: session.selectedSlot.start,
     student: null,

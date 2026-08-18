@@ -1,4 +1,9 @@
-import type { IncomingBooking, StepGroupId } from "./types";
+import type {
+  ConsultationParty,
+  ConsultationStatus,
+  IncomingBooking,
+  StepGroupId,
+} from "./types";
 
 const STORAGE_KEY = "chocotson.booking-board";
 const BOARD_EVENT = "chocotson-board";
@@ -11,6 +16,9 @@ export type BoardRecord = {
   durationMinutes: number;
   claimed: boolean;
   student: string | null;
+  consultationStatus: ConsultationStatus;
+  startedBy: ConsultationParty | null;
+  endedBy: ConsultationParty | null;
 };
 
 let memory: BoardRecord[] = [];
@@ -38,11 +46,19 @@ function parse(raw: string | null): BoardRecord[] | null {
   }
   try {
     const rows = JSON.parse(raw) as Array<
-      Omit<BoardRecord, "slotStart"> & { slotStart: string }
+      Omit<BoardRecord, "slotStart"> & {
+        slotStart: string;
+        consultationStatus?: ConsultationStatus;
+        startedBy?: ConsultationParty | null;
+        endedBy?: ConsultationParty | null;
+      }
     >;
     return rows.map((row) => ({
       ...row,
       slotStart: new Date(row.slotStart),
+      consultationStatus: row.consultationStatus ?? "idle",
+      startedBy: row.startedBy ?? null,
+      endedBy: row.endedBy ?? null,
     }));
   } catch {
     return null;
@@ -93,6 +109,9 @@ export function publishConfirmedBooking(input: {
     durationMinutes: input.durationMinutes,
     claimed: false,
     student: null,
+    consultationStatus: "idle",
+    startedBy: null,
+    endedBy: null,
   };
   writeBoard([...readBoard(), record]);
   return record;
@@ -124,6 +143,20 @@ export function listOpenBookings(): IncomingBooking[] {
 
 export function getBoardRecord(bookingId: string): BoardRecord | undefined {
   return readBoard().find((record) => record.id === bookingId);
+}
+
+export function updateConsultationOnBoard(
+  bookingId: string,
+  patch: Pick<BoardRecord, "consultationStatus" | "startedBy" | "endedBy">,
+): BoardRecord {
+  const current = readBoard();
+  const target = current.find((record) => record.id === bookingId);
+  if (!target) {
+    throw new Error("予約が見つかりません");
+  }
+  const next: BoardRecord = { ...target, ...patch };
+  writeBoard(current.map((record) => (record.id === bookingId ? next : record)));
+  return next;
 }
 
 export function getElderlyBookingView(bookingId: string): {

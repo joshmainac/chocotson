@@ -1,19 +1,72 @@
-import type { ConsultationParty, ConsultationView } from "./types";
+import {
+  getBoardRecord,
+  updateConsultationOnBoard,
+} from "./board";
+import type {
+  ConsultationParty,
+  ConsultationView,
+} from "./types";
 
-export function getConsultation(_bookingId: string): ConsultationView {
-  throw new Error("not implemented");
+function toView(record: NonNullable<ReturnType<typeof getBoardRecord>>): ConsultationView {
+  return {
+    status: record.consultationStatus,
+    startedBy: record.startedBy,
+    endedBy: record.endedBy,
+    hasMedia: false,
+    hasNextScreen: false,
+    stepTitle: record.stepTitle,
+    slotStart: record.slotStart,
+  };
+}
+
+function requireRecord(bookingId: string) {
+  const record = getBoardRecord(bookingId);
+  if (!record) {
+    throw new Error("予約が見つかりません");
+  }
+  return record;
+}
+
+export function getConsultation(bookingId: string): ConsultationView {
+  return toView(requireRecord(bookingId));
 }
 
 export function startConsultation(
-  _bookingId: string,
-  _party: ConsultationParty,
+  bookingId: string,
+  party: ConsultationParty,
 ): ConsultationView {
-  throw new Error("not implemented");
+  const record = requireRecord(bookingId);
+  if (!record.claimed) {
+    throw new Error("まだ受けていない予約です");
+  }
+  if (record.consultationStatus === "active") {
+    throw new Error("すでに相談中です");
+  }
+  if (record.consultationStatus === "ended") {
+    throw new Error("すでに終わっています");
+  }
+  return toView(
+    updateConsultationOnBoard(bookingId, {
+      consultationStatus: "active",
+      startedBy: party,
+      endedBy: null,
+    }),
+  );
 }
 
 export function endConsultation(
-  _bookingId: string,
-  _party: ConsultationParty,
+  bookingId: string,
+  party: ConsultationParty,
 ): ConsultationView {
-  throw new Error("not implemented");
+  const record = requireRecord(bookingId);
+  if (record.consultationStatus !== "active") {
+    throw new Error("相談中ではありません");
+  }
+  return toView(
+    updateConsultationOnBoard(bookingId, {
+      consultationStatus: "ended",
+      startedBy: record.startedBy,
+      endedBy: party,
+    }),
+  );
 }

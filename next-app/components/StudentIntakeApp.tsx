@@ -4,6 +4,11 @@ import { useEffect, useState } from "react";
 import { subscribeBoard } from "@/lib/chocotson/board";
 import { getStepGroups } from "@/lib/chocotson/catalog";
 import {
+  endConsultation,
+  getConsultation,
+  startConsultation,
+} from "@/lib/chocotson/consultation";
+import {
   claimBooking,
   createStudentSession,
   getClaimReceipt,
@@ -53,6 +58,10 @@ export default function StudentIntakeApp() {
 
   const receipt =
     session.phase === "receipt" ? getClaimReceipt(session) : null;
+  const consultation =
+    session.phase === "receipt" && session.claimedBookingId
+      ? getConsultation(session.claimedBookingId)
+      : null;
 
   return (
     <div className="min-h-full bg-[#f6f3ee] text-[#2b2b2b]">
@@ -196,9 +205,44 @@ export default function StudentIntakeApp() {
               <p className="mt-2 text-base">{formatSlot(receipt.slotStart)}</p>
             </div>
 
-            <p className="max-w-md text-sm leading-relaxed text-[#6f6a63]">
-              この画面で終了です。あとは予約の時間までお待ちください。
-            </p>
+            {consultation?.status === "idle" ? (
+              <button
+                type="button"
+                onClick={() => {
+                  if (!session.claimedBookingId) {
+                    return;
+                  }
+                  startConsultation(session.claimedBookingId, "student");
+                }}
+                className="rounded-full bg-[#2b2b2b] px-8 py-3 text-sm text-white transition hover:bg-[#444]"
+              >
+                相談を始める
+              </button>
+            ) : null}
+            {consultation?.status === "active" ? (
+              <>
+                <p className="max-w-md text-sm leading-relaxed text-[#6f6a63]">
+                  相談中です。短い時間だけで大丈夫です。
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!session.claimedBookingId) {
+                      return;
+                    }
+                    endConsultation(session.claimedBookingId, "student");
+                  }}
+                  className="rounded-full bg-[#2b2b2b] px-8 py-3 text-sm text-white transition hover:bg-[#444]"
+                >
+                  終わりました
+                </button>
+              </>
+            ) : null}
+            {consultation?.status === "ended" ? (
+              <p className="max-w-md text-sm leading-relaxed text-[#6f6a63]">
+                相談が終わりました
+              </p>
+            ) : null}
           </section>
         )}
       </main>

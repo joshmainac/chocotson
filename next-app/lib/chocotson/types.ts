@@ -35,6 +35,7 @@ export type BookingSession = {
 
 export type Confirmation = {
   accepted: boolean;
+  bookingId: string;
   stepTitle: string;
   slotStart: Date;
   student: string | null;
