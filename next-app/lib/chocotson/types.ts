@@ -49,3 +49,34 @@ export type LandingCopy = {
   notFamily: string;
   durationMinutesLabel: string;
 };
+
+export type IncomingBooking = {
+  id: string;
+  stepTitle: string;
+  groupId: StepGroupId;
+  slotStart: Date;
+  durationMinutes: number;
+  taken: boolean;
+};
+
+export type StudentPhase = "groups" | "list" | "receipt";
+
+export type StudentSession = {
+  phase: StudentPhase;
+  teachingGroupIds: StepGroupId[];
+  claimedBookingId: string | null;
+  requiresAccount: boolean;
+};
+
+export type ClaimReceipt = {
+  stepTitle: string;
+  slotStart: Date;
+  hasNextScreen: boolean;
+  consultationStarted: boolean;
+};
+
+export type StudentCopy = {
+  language: "ja";
+  claimLabel: string;
+  emptyList: string;
+};
