@@ -1,4 +1,4 @@
-import { DEMO_BOOKINGS } from "./demo-bookings";
+import { claimOnBoard, getBoardRecord, listOpenBookings } from "./board";
 import type {
   ClaimReceipt,
   IncomingBooking,
@@ -41,12 +41,9 @@ export function goToBookingList(session: StudentSession): StudentSession {
 }
 
 export function getVisibleBookings(session: StudentSession): IncomingBooking[] {
-  return DEMO_BOOKINGS.filter((booking) =>
+  return listOpenBookings().filter((booking) =>
     session.teachingGroupIds.includes(booking.groupId),
-  ).map((booking) => ({
-    ...booking,
-    taken: booking.id === session.claimedBookingId,
-  }));
+  );
 }
 
 export function claimBooking(
@@ -54,24 +51,30 @@ export function claimBooking(
   bookingId: string,
 ): StudentSession {
   const booking = getVisibleBookings(session).find((item) => item.id === bookingId);
-  if (!booking) {
-    throw new Error("予約が見つかりません");
+  if (booking) {
+    claimOnBoard(bookingId);
+    return {
+      ...session,
+      phase: "receipt",
+      claimedBookingId: bookingId,
+    };
   }
-  if (booking.taken) {
-    throw new Error("この予約はすでに受け済みです");
+  const existing = getBoardRecord(bookingId);
+  if (existing?.claimed) {
+    return {
+      ...session,
+      phase: "receipt",
+      claimedBookingId: bookingId,
+    };
   }
-  return {
-    ...session,
-    phase: "receipt",
-    claimedBookingId: bookingId,
-  };
+  throw new Error("予約が見つかりません");
 }
 
 export function getClaimReceipt(session: StudentSession): ClaimReceipt {
   if (!session.claimedBookingId) {
     throw new Error("受けた予約がありません");
   }
-  const booking = DEMO_BOOKINGS.find((item) => item.id === session.claimedBookingId);
+  const booking = getBoardRecord(session.claimedBookingId);
   if (!booking) {
     throw new Error("予約が見つかりません");
   }

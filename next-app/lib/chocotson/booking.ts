@@ -1,3 +1,4 @@
+import { publishConfirmedBooking } from "./board";
 import type {
   BookingSession,
   Confirmation,
@@ -84,6 +85,12 @@ export function confirmBooking(session: BookingSession): Confirmation {
   if (!session.selectedStep || !session.selectedSlot) {
     throw new Error("step and slot are required to confirm");
   }
+  publishConfirmedBooking({
+    stepTitle: session.selectedStep.title,
+    groupId: session.selectedStep.groupId,
+    slotStart: session.selectedSlot.start,
+    durationMinutes: session.selectedSlot.durationMinutes,
+  });
   return {
     accepted: true,
     stepTitle: session.selectedStep.title,
