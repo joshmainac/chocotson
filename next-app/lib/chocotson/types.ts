@@ -80,3 +80,17 @@ export type StudentCopy = {
   claimLabel: string;
   emptyList: string;
 };
+
+export type ConsultationParty = "elderly" | "student";
+
+export type ConsultationStatus = "idle" | "active" | "ended";
+
+export type ConsultationView = {
+  status: ConsultationStatus;
+  startedBy: ConsultationParty | null;
+  endedBy: ConsultationParty | null;
+  hasMedia: false;
+  hasNextScreen: false;
+  stepTitle: string;
+  slotStart: Date;
+};
