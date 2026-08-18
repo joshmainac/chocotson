@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { subscribeBoard } from "@/lib/chocotson/board";
 import { getStepGroups } from "@/lib/chocotson/catalog";
 import {
   claimBooking,
@@ -42,6 +43,9 @@ export default function StudentIntakeApp() {
   const groups = getStepGroups();
   const [session, setSession] = useState<StudentSession>(() => createStudentSession());
   const [listError, setListError] = useState<string | null>(null);
+  const [, setBoardTick] = useState(0);
+
+  useEffect(() => subscribeBoard(() => setBoardTick((tick) => tick + 1)), []);
 
   const bookings = session.phase === "list" || session.phase === "receipt"
     ? getVisibleBookings(session)
@@ -136,9 +140,7 @@ export default function StudentIntakeApp() {
                 {bookings.map((booking) => (
                   <li
                     key={booking.id}
-                    className={`rounded-2xl border border-[#e4dfd6] bg-white px-6 py-5 ${
-                      booking.taken ? "opacity-60" : ""
-                    }`}
+                    className="rounded-2xl border border-[#e4dfd6] bg-white px-6 py-5"
                   >
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div className="space-y-1">
@@ -146,21 +148,17 @@ export default function StudentIntakeApp() {
                         <p className="text-sm text-[#6f6a63]">
                           {formatSlot(booking.slotStart)}（{booking.durationMinutes}分）
                         </p>
-                        {booking.taken ? (
-                          <p className="text-xs text-[#8a847c]">受け済み</p>
-                        ) : null}
                       </div>
-                      {!booking.taken ? (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setSession((current) => claimBooking(current, booking.id))
-                          }
-                          className="rounded-full bg-[#2b2b2b] px-6 py-2.5 text-sm text-white transition hover:bg-[#444]"
-                        >
-                          {copy.claimLabel}
-                        </button>
-                      ) : null}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const next = claimBooking(session, booking.id);
+                          setSession(next);
+                        }}
+                        className="rounded-full bg-[#2b2b2b] px-6 py-2.5 text-sm text-white transition hover:bg-[#444]"
+                      >
+                        {copy.claimLabel}
+                      </button>
                     </div>
                   </li>
                 ))}
@@ -172,7 +170,7 @@ export default function StudentIntakeApp() {
                 type="button"
                 onClick={() =>
                   setSession((current) => ({
-                    ...selectTeachingGroups(current, []),
+                    ...current,
                     phase: "groups",
                   }))
                 }
