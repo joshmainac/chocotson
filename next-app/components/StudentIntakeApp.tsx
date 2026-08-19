@@ -117,7 +117,7 @@ export default function StudentIntakeApp() {
                 onClick={() => {
                   try {
                     setListError(null);
-                    setSession((current) => goToBookingList(current));
+                    setSession(goToBookingList(session));
                   } catch (error) {
                     setListError(
                       error instanceof Error ? error.message : "グループを選んでください",
