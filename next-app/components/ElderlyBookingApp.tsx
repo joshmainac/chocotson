@@ -84,34 +84,115 @@ export default function ElderlyBookingApp() {
     ? getBoardRecord(confirmation.bookingId)
     : undefined;
 
+  if (session.phase === "landing" && !confirmation) {
+    return (
+      <div className="chocotson-landing">
+        <header className="topbar">
+          <a className="brand" href="#top" aria-label="チョコットソン トップ">
+            <span className="brand-mark">C</span>
+            <span>CHOCOTSON</span>
+          </a>
+          <span className="mini-note">15分で、ひとつずつ。</span>
+        </header>
+
+        <section className="hero" id="top">
+          <div className="hero-copy">
+            <p className="eyebrow">DIGITAL HELP, WITH A LITTLE HUMOR.</p>
+            <h1>
+              ちょこっと
+              <br />
+              聞いてみる。
+            </h1>
+            <p className="lead">
+              スマホの「これだけ分からない」を、
+              <br />
+              家族ではない誰かに、15分だけ。
+            </p>
+            <a className="primary" href="#troubles">
+              困っていることを選ぶ <span>→</span>
+            </a>
+            <p className="reassure">うまく説明できなくても、大丈夫です。</p>
+          </div>
+          <div
+            className="hero-art"
+            aria-label="スマートフォンを持つ大人と、相談に答える学生のイメージ"
+          >
+            <span className="big-number">30</span>
+            <img
+              className="hero-people"
+              src="/hero-chocotson-v2.png"
+              alt="スマートフォンに少し困っている女性と、一緒に考える大学生"
+            />
+            <span className="art-caption">ひとつ越えたら、今日は合格。</span>
+          </div>
+        </section>
+
+        <section className="troubles" id="troubles">
+          <div className="section-heading">
+            <p className="eyebrow">TODAY&apos;S LITTLE TROUBLE</p>
+            <h2>今日は、どれを聞きますか？</h2>
+            <p>一度にひとつ。それが、いちばん早い。</p>
+          </div>
+          <div className="card-grid">
+            <a className="trouble-card rose" href="#reserve">
+              <span className="card-number">01</span>
+              <div className="card-icon" aria-hidden="true">
+                <span />
+              </div>
+              <h3>LINEで写真を送りたい</h3>
+              <p>写真は撮れた。送り方だけ、迷子です。</p>
+              <span className="card-action">
+                これを相談する <b>→</b>
+              </span>
+            </a>
+            <a className="trouble-card blue" href="#reserve">
+              <span className="card-number">02</span>
+              <div className="card-icon" aria-hidden="true">
+                <span />
+              </div>
+              <h3>画面が急に暗くなった</h3>
+              <p>スマホが、ひと足先に夜になりました。</p>
+              <span className="card-action">
+                これを相談する <b>→</b>
+              </span>
+            </a>
+            <a className="trouble-card green" href="#reserve">
+              <span className="card-number">03</span>
+              <div className="card-icon" aria-hidden="true">
+                <span />
+              </div>
+              <h3>Wi-Fiがつながらない</h3>
+              <p>Wi-Fiは、いまどこにいるのでしょう。</p>
+              <span className="card-action">
+                これを相談する <b>→</b>
+              </span>
+            </a>
+          </div>
+        </section>
+
+        <section className="reserve" id="reserve">
+          <p className="eyebrow">ONE QUESTION / {duration} MINUTES</p>
+          <h2>話すことは、ひとつだけ。</h2>
+          <p>相談する内容を選んだら、空いている時間を予約します。</p>
+          <button
+            type="button"
+            onClick={() => setSession((current) => goToGroups(current))}
+          >
+            {copy.durationMinutesLabel}を予約する <span>→</span>
+          </button>
+        </section>
+
+        <footer>
+          <span>チョコットソン</span>
+          <span>小さな段差を、いっしょに。</span>
+        </footer>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-full bg-[#f6f3ee] text-[#2b2b2b]">
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-10 sm:px-10">
-        {session.phase === "landing" && !confirmation ? (
-          <section className="flex flex-1 flex-col items-center justify-center gap-8 py-16 text-center">
-            <p className="text-xs tracking-[0.28em] text-[#8a847c]">
-              ONE QUESTION / {duration} MINUTES
-            </p>
-            <h1 className="max-w-3xl text-4xl font-semibold leading-tight sm:text-5xl">
-              話すことは、ひとつだけ。
-            </h1>
-            <p className="max-w-xl text-lg leading-8 text-[#5c574f]">
-              {copy.notFamily}
-              <br />
-              {copy.oneAtATime}
-            </p>
-            <p className="text-base text-[#5c574f]">{copy.shortTime}</p>
-            <button
-              type="button"
-              className="mt-4 inline-flex items-center gap-4 rounded-md bg-[#2b2b2b] px-8 py-4 text-lg text-white shadow-[4px_4px_0_0_#c4a35a]"
-              onClick={() => setSession((current) => goToGroups(current))}
-            >
-              困っていることを選ぶ
-              <span aria-hidden="true">→</span>
-            </button>
-          </section>
-        ) : null}
-
         {session.phase === "groups" && !confirmation ? (
           <section className="flex flex-col gap-10">
             <header className="space-y-3 text-center">

@@ -22,3 +22,375 @@ body {
     var(--font-geist-sans),
     sans-serif;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+.chocotson-landing {
+  --ink: #424540;
+  --paper: #fffdf7;
+  --cream: #fff;
+  --sage: #b8cbb5;
+  --blue: #bad5e6;
+  --rose: #e8bbb5;
+  --yellow: #f1ca68;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+}
+
+.chocotson-landing a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.chocotson-landing .topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1180px;
+  min-height: 76px;
+  margin: auto;
+  padding: 0 34px;
+  border-bottom: 1px solid #25272440;
+}
+
+.chocotson-landing .brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+.chocotson-landing .brand-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid var(--ink);
+  border-radius: 50% 48% 52% 46%;
+  font: 700 20px Georgia, serif;
+  transform: rotate(-7deg);
+}
+
+.chocotson-landing .mini-note {
+  font-size: 13px;
+  letter-spacing: 0.08em;
+}
+
+.chocotson-landing .hero {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  align-items: center;
+  gap: 50px;
+  max-width: 1180px;
+  min-height: 700px;
+  margin: auto;
+  padding: 58px 34px 80px;
+}
+
+.chocotson-landing .eyebrow {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+.chocotson-landing .hero .eyebrow {
+  font-size: 15px;
+}
+
+.chocotson-landing .hero h1 {
+  margin: 20px 0 22px;
+  font-size: clamp(48px, 5.8vw, 78px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.06em;
+}
+
+.chocotson-landing .lead {
+  margin-bottom: 32px;
+  font-size: 19px;
+  line-height: 1.9;
+  letter-spacing: 0.03em;
+}
+
+.chocotson-landing .primary,
+.chocotson-landing .reserve button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: min(100%, 380px);
+  padding: 20px 22px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  border: 0;
+  border-radius: 3px;
+  box-shadow: 7px 7px 0 var(--yellow);
+  cursor: pointer;
+}
+
+.chocotson-landing .primary span,
+.chocotson-landing .reserve button span {
+  font-size: 25px;
+}
+
+.chocotson-landing .reassure {
+  margin: 20px 0 0;
+  color: #5e615c;
+  font-size: 13px;
+}
+
+.chocotson-landing .hero-art {
+  position: relative;
+  overflow: hidden;
+  min-height: 540px;
+  background: #e7efe4;
+  border-radius: 48% 48% 5px 5px;
+}
+
+.chocotson-landing .big-number {
+  position: absolute;
+  top: -36px;
+  left: 26px;
+  font: 700 240px/1 Georgia, serif;
+  color: #fffaf1b8;
+  letter-spacing: -0.12em;
+}
+
+.chocotson-landing .hero-people {
+  position: absolute;
+  bottom: 26px;
+  left: 2%;
+  z-index: 2;
+  width: 96%;
+  height: auto;
+  object-fit: contain;
+}
+
+.chocotson-landing .art-caption {
+  position: absolute;
+  bottom: 14px;
+  left: 26px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+}
+
+.chocotson-landing .troubles {
+  background: var(--cream);
+  padding: 100px max(34px, calc(50vw - 556px));
+}
+
+.chocotson-landing .section-heading {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 10px 34px;
+  margin-bottom: 46px;
+}
+
+.chocotson-landing .section-heading .eyebrow {
+  grid-row: 1 / 3;
+}
+
+.chocotson-landing .section-heading h2 {
+  margin: 0;
+  font-size: clamp(30px, 4vw, 48px);
+  letter-spacing: -0.05em;
+}
+
+.chocotson-landing .section-heading > p:last-child {
+  margin: 0;
+  color: #65675f;
+}
+
+.chocotson-landing .card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.chocotson-landing .trouble-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+  padding: 22px;
+  border: 1.5px solid var(--ink);
+  transition: all 0.2s;
+}
+
+.chocotson-landing .trouble-card:hover,
+.chocotson-landing .trouble-card:focus-visible {
+  outline: none;
+  transform: translateY(-7px);
+  box-shadow: 0 12px #25272421;
+}
+
+.chocotson-landing .trouble-card.rose {
+  background: #f6ddd9;
+}
+
+.chocotson-landing .trouble-card.blue {
+  background: #e0eff7;
+}
+
+.chocotson-landing .trouble-card.green {
+  background: #e4eee0;
+}
+
+.chocotson-landing .card-number {
+  font: 700 36px Georgia, serif;
+}
+
+.chocotson-landing .card-icon {
+  display: grid;
+  place-items: center;
+  height: 145px;
+}
+
+.chocotson-landing .card-icon span {
+  position: relative;
+  width: 92px;
+  height: 112px;
+  background: var(--cream);
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  transform: rotate(-5deg);
+}
+
+.chocotson-landing .card-icon span::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 34px;
+  width: 22px;
+  height: 3px;
+  background: var(--ink);
+}
+
+.chocotson-landing .trouble-card h3 {
+  margin: 12px 0 7px;
+  font-size: 23px;
+  line-height: 1.45;
+  letter-spacing: -0.03em;
+}
+
+.chocotson-landing .trouble-card p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.chocotson-landing .card-action {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid #25272459;
+  font-weight: 700;
+}
+
+.chocotson-landing .reserve {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 110px 34px 120px;
+  text-align: center;
+}
+
+.chocotson-landing .reserve h2 {
+  margin: 16px 0;
+  font-size: clamp(34px, 5vw, 60px);
+  letter-spacing: -0.06em;
+}
+
+.chocotson-landing .reserve > p:not(.eyebrow) {
+  margin: 0 0 34px;
+  font-size: 17px;
+}
+
+.chocotson-landing .reserve button {
+  margin: auto;
+  text-align: left;
+}
+
+.chocotson-landing footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 95px;
+  padding: 0 max(34px, calc(50vw - 556px));
+  background: var(--ink);
+  color: var(--cream);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+}
+
+@media (width <= 760px) {
+  .chocotson-landing .topbar {
+    min-height: 68px;
+    padding: 0 20px;
+  }
+  .chocotson-landing .mini-note {
+    display: none;
+  }
+  .chocotson-landing .hero {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 42px 20px 64px;
+  }
+  .chocotson-landing .hero .eyebrow {
+    font-size: 13px;
+    line-height: 1.6;
+    letter-spacing: 0.14em;
+  }
+  .chocotson-landing .hero h1 {
+    font-size: 48px;
+  }
+  .chocotson-landing .lead {
+    font-size: 16px;
+  }
+  .chocotson-landing .hero-art {
+    border-radius: 180px 180px 5px 5px;
+    min-height: 430px;
+  }
+  .chocotson-landing .big-number {
+    font-size: 180px;
+    top: -25px;
+  }
+  .chocotson-landing .hero-people {
+    width: 112%;
+    max-width: none;
+    bottom: 28px;
+    left: -6%;
+  }
+  .chocotson-landing .troubles {
+    padding: 72px 20px;
+  }
+  .chocotson-landing .section-heading {
+    display: block;
+  }
+  .chocotson-landing .section-heading h2 {
+    margin: 14px 0;
+  }
+  .chocotson-landing .card-grid {
+    grid-template-columns: 1fr;
+  }
+  .chocotson-landing .trouble-card {
+    min-height: 385px;
+  }
+  .chocotson-landing footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 28px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chocotson-landing .trouble-card {
+    transition: none;
+  }
+}
