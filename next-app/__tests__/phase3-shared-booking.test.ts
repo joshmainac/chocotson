@@ -1,4 +1,11 @@
-import { getElderlyBookingView, resetBookingBoard } from "@/lib/chocotson/board";
+import {
+  claimOnBoard,
+  getElderlyBookingView,
+  listBookingsForElderly,
+  listBookingsForStudent,
+  publishConfirmedBooking,
+  resetBookingBoard,
+} from "@/lib/chocotson/board";
 import {
   claimBooking,
   createStudentSession,
@@ -157,6 +164,32 @@ describe("Phase 3 shared booking", () => {
     expect(before[0]?.stepTitle).toBe(confirmation.stepTitle);
     resetBookingBoard();
     expect(getVisibleBookings(studentList(["1-30"]))).toHaveLength(0);
+  });
+
+  it("マッチング後は両者の予定に同じデモ相談URLが発行される", () => {
+    const booking = publishConfirmedBooking({
+      stepTitle: "LINEで写真を送る",
+      groupId: "1-30",
+      slotStart: new Date("2026-08-24T01:00:00Z"),
+      durationMinutes: 15,
+      elderlyUserId: "sato",
+      elderlyUserName: "佐藤 よし子",
+    });
+    const matched = claimOnBoard(booking.id, {
+      id: "aoki",
+      name: "青木 颯太",
+    });
+
+    expect(matched.meetingUrl).toBe(`/meeting/${booking.id}`);
+    expect(listBookingsForElderly("sato")[0]?.meetingUrl).toBe(
+      matched.meetingUrl,
+    );
+    expect(listBookingsForStudent("aoki")[0]?.meetingUrl).toBe(
+      matched.meetingUrl,
+    );
+    expect(listBookingsForElderly("sato")[0]?.studentUserName).toBe(
+      "青木 颯太",
+    );
   });
 
   // 受けたあとも、高齢者の確認に学生名は出さない。

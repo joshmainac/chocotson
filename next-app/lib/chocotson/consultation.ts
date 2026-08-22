@@ -6,6 +6,7 @@ import type {
   ConsultationParty,
   ConsultationView,
 } from "./types";
+import { markCompletedStep } from "./local-demo-store";
 
 function toView(record: NonNullable<ReturnType<typeof getBoardRecord>>): ConsultationView {
   return {
@@ -62,11 +63,13 @@ export function endConsultation(
   if (record.consultationStatus !== "active") {
     throw new Error("相談中ではありません");
   }
-  return toView(
-    updateConsultationOnBoard(bookingId, {
-      consultationStatus: "ended",
-      startedBy: record.startedBy,
-      endedBy: party,
-    }),
-  );
+  const ended = updateConsultationOnBoard(bookingId, {
+    consultationStatus: "ended",
+    startedBy: record.startedBy,
+    endedBy: party,
+  });
+  if (record.elderlyUserId && record.stepId) {
+    markCompletedStep(record.elderlyUserId, record.stepId);
+  }
+  return toView(ended);
 }
