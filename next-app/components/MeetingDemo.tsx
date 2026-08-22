@@ -144,7 +144,11 @@ export default function MeetingDemo({ bookingId }: { bookingId: string }) {
             </Link>
           ) : null}
           {view.showChat ? (
-            <BookingChat bookingId={bookingId} party={chatParty(party)} />
+            <BookingChat
+              bookingId={bookingId}
+              party={chatParty(party)}
+              canSendChat={view.canSendChat}
+            />
           ) : null}
         </section>
       </main>

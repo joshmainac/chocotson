@@ -8,9 +8,14 @@ import StepFeedbackPicker from "./StepFeedbackPicker";
 type BookingChatProps = {
   bookingId: string;
   party: ConsultationParty;
+  canSendChat?: boolean;
 };
 
-export default function BookingChat({ bookingId, party }: BookingChatProps) {
+export default function BookingChat({
+  bookingId,
+  party,
+  canSendChat = true,
+}: BookingChatProps) {
   const [draft, setDraft] = useState("");
   const [error, setError] = useState<string | null>(null);
   const chat = getChat(bookingId);
@@ -62,22 +67,29 @@ export default function BookingChat({ bookingId, party }: BookingChatProps) {
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={(event) => {
-            if (event.key === "Enter") {
+            if (event.key === "Enter" && canSendChat) {
               event.preventDefault();
               handleSend();
             }
           }}
           placeholder="メッセージを書く"
-          className="min-h-12 flex-1 rounded-md border border-[#d9d3c9] bg-white px-4 text-base outline-none focus:border-[#2b2b2b]"
+          disabled={!canSendChat}
+          className="min-h-12 flex-1 rounded-md border border-[#d9d3c9] bg-white px-4 text-base outline-none focus:border-[#2b2b2b] disabled:cursor-not-allowed disabled:bg-[#f6f3ee] disabled:text-[#8a847c]"
         />
         <button
           type="button"
           onClick={handleSend}
-          className="rounded-md bg-[#2b2b2b] px-6 py-3 text-base text-white"
+          disabled={!canSendChat}
+          className="rounded-md bg-[#2b2b2b] px-6 py-3 text-base text-white disabled:cursor-not-allowed disabled:bg-[#b8b3ab]"
         >
           送る
         </button>
       </div>
+      {!canSendChat ? (
+        <p className="mt-2 text-sm text-[#8a847c]">
+          学生が予約を受けると、ここから返信できます。
+        </p>
+      ) : null}
       {error ? <p className="mt-2 text-sm text-[#a33]">{error}</p> : null}
     </div>
   );
