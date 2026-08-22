@@ -35,6 +35,7 @@ export type BoardRecord = {
   availabilityLabel: string | null;
   candidateSlotStarts: Date[];
   messages: BoardChatMessage[];
+  stepRating: 1 | 2 | 3 | 4 | 5 | null;
 };
 
 let memory: BoardRecord[] = [];
@@ -75,6 +76,7 @@ function parse(raw: string | null): BoardRecord[] | null {
         meetingUrl?: string | null;
         stepId?: number | null;
         messages?: BoardChatMessage[];
+        stepRating?: 1 | 2 | 3 | 4 | 5 | null;
       }
     >;
     return rows.map((row) => ({
@@ -93,6 +95,7 @@ function parse(raw: string | null): BoardRecord[] | null {
       meetingUrl: row.meetingUrl ?? null,
       stepId: row.stepId ?? null,
       messages: row.messages ?? [],
+      stepRating: row.stepRating ?? null,
     }));
   } catch {
     return null;
@@ -162,6 +165,7 @@ export function publishConfirmedBooking(input: {
       ? input.candidateSlotStarts
       : [input.slotStart],
     messages: [],
+    stepRating: null,
   };
   writeBoard([...readBoard(), record]);
   return record;
@@ -235,8 +239,26 @@ export function listOpenBookings(): IncomingBooking[] {
     }));
 }
 
+export function listAllBoardRecords(): BoardRecord[] {
+  return [...readBoard()];
+}
+
 export function getBoardRecord(bookingId: string): BoardRecord | undefined {
   return readBoard().find((record) => record.id === bookingId);
+}
+
+export function updateStepRatingOnBoard(
+  bookingId: string,
+  stepRating: 1 | 2 | 3 | 4 | 5 | null,
+): BoardRecord {
+  const current = readBoard();
+  const target = current.find((record) => record.id === bookingId);
+  if (!target) {
+    throw new Error("予約が見つかりません");
+  }
+  const next: BoardRecord = { ...target, stepRating };
+  writeBoard(current.map((record) => (record.id === bookingId ? next : record)));
+  return next;
 }
 
 export function updateConsultationOnBoard(
