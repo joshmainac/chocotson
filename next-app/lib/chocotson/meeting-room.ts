@@ -15,6 +15,7 @@ export type MeetingRoomView = {
   promptMessage: string | null;
   canStartConsultation: boolean;
   canEndConsultation: boolean;
+  canSendChat: boolean;
   party: MeetingRoomParty;
 };
 
@@ -66,6 +67,7 @@ export function getMeetingRoomView(
       promptMessage: MISSING_PROMPT,
       canStartConsultation: false,
       canEndConsultation: false,
+      canSendChat: false,
       party,
     };
   }
@@ -82,6 +84,9 @@ export function getMeetingRoomView(
     }
   }
 
+  const canSendChat =
+    party === "elderly" ? true : party === "student" ? booking.claimed : false;
+
   return {
     bookingId,
     found: true,
@@ -93,6 +98,7 @@ export function getMeetingRoomView(
     promptMessage: null,
     canStartConsultation,
     canEndConsultation,
+    canSendChat,
     party,
   };
 }

@@ -143,8 +143,9 @@ export function publishConfirmedBooking(input: {
   availabilityLabel?: string;
   candidateSlotStarts?: Date[];
 }): BoardRecord {
+  const id = newBookingId();
   const record: BoardRecord = {
-    id: newBookingId(),
+    id,
     stepTitle: input.stepTitle,
     stepId: input.stepId ?? null,
     groupId: input.groupId,
@@ -156,7 +157,7 @@ export function publishConfirmedBooking(input: {
     elderlyUserName: input.elderlyUserName ?? null,
     studentUserId: null,
     studentUserName: null,
-    meetingUrl: null,
+    meetingUrl: `/meeting/${id}`,
     consultationStatus: "idle",
     startedBy: null,
     endedBy: null,
@@ -203,7 +204,7 @@ export function claimOnBoard(
     claimed: true,
     studentUserId: student?.id ?? null,
     studentUserName: student?.name ?? null,
-    meetingUrl: `/meeting/${target.id}`,
+    meetingUrl: target.meetingUrl ?? `/meeting/${target.id}`,
     slotStart: selectedSlotStart ?? target.slotStart,
   };
   writeBoard(current.map((record) => (record.id === bookingId ? claimed : record)));
