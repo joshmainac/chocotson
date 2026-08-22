@@ -8,7 +8,7 @@ import {
   subscribeBoard,
 } from "@/lib/chocotson/board";
 import { getStepGroups } from "@/lib/chocotson/catalog";
-import { endConsultation, getConsultation, startConsultation } from "@/lib/chocotson/consultation";
+import { getMypageConsultationSurface } from "@/lib/chocotson/consultation-surface";
 import { STUDENT_DEMO_USERS } from "@/lib/chocotson/demo-users";
 import {
   ACTIVE_STUDENT_USER_KEY,
@@ -30,7 +30,8 @@ import {
   selectTeachingGroups,
 } from "@/lib/chocotson/student";
 import type { StepGroupId, StudentSession } from "@/lib/chocotson/types";
-import BookingChat from "./BookingChat";
+
+const mypageConsultationSurface = getMypageConsultationSurface();
 
 const GROUP_TONES: Record<StepGroupId, string> = {
   "1-30": "bg-[#f3e7de]",
@@ -112,9 +113,6 @@ export default function StudentIntakeApp() {
   const receipt = session.phase === "receipt" ? getClaimReceipt(session) : null;
   const matchedBooking = session.claimedBookingId
     ? getBoardRecord(session.claimedBookingId)
-    : null;
-  const consultation = session.phase === "receipt" && session.claimedBookingId
-    ? getConsultation(session.claimedBookingId)
     : null;
 
   if (!currentUser) {
@@ -301,12 +299,15 @@ export default function StudentIntakeApp() {
           <section className="flex flex-1 flex-col items-center justify-center gap-7 py-12 text-center">
             <header className="space-y-3"><p className="text-xs tracking-[0.28em] text-[#8a847c]">MATCHED</p><h1 className="text-2xl font-medium sm:text-3xl">マッチングしました</h1><p className="text-sm text-[#6f6a63]">両方のマイページに予定と相談URLを追加しました。</p></header>
             <div className="w-full max-w-lg rounded-2xl border border-[#e4dfd6] bg-white px-8 py-8 text-left"><p className="text-xs tracking-[0.2em] text-[#8a847c]">相談内容</p><p className="mt-2 text-lg font-medium">{receipt.stepTitle}</p><p className="mt-6 text-xs tracking-[0.2em] text-[#8a847c]">日時</p><p className="mt-2 text-base">{formatSlot(receipt.slotStart)}</p>{matchedBooking?.meetingUrl ? <><p className="mt-6 text-xs tracking-[0.2em] text-[#8a847c]">デモ相談URL</p><a className="meeting-url" href={matchedBooking.meetingUrl}>{matchedBooking.meetingUrl}</a></> : null}</div>
-            {consultation?.status === "idle" && matchedBooking?.meetingUrl ? <a href={matchedBooking.meetingUrl} className="rounded-full bg-[#2b2b2b] px-8 py-3 text-sm text-white">相談URLを開く</a> : null}
-            {consultation?.status === "active" ? <><p className="text-sm text-[#6f6a63]">相談中です。短い時間だけで大丈夫です。</p><button type="button" onClick={() => session.claimedBookingId && endConsultation(session.claimedBookingId, "student")} className="rounded-full bg-[#2b2b2b] px-8 py-3 text-sm text-white">終わりました</button></> : null}
-            {consultation?.status === "ended" ? <p className="text-sm text-[#6f6a63]">相談が終わりました</p> : null}
-            {consultation?.status === "idle" && session.claimedBookingId ? <button type="button" onClick={() => session.claimedBookingId && startConsultation(session.claimedBookingId, "student")} className="text-sm text-[#6f6a63] underline">この画面から相談を開始する</button> : null}
-            {session.claimedBookingId ? (
-              <BookingChat bookingId={session.claimedBookingId} party="student" />
+            {matchedBooking?.meetingUrl ? (
+              <a href={matchedBooking.meetingUrl} className="rounded-full bg-[#2b2b2b] px-8 py-3 text-sm text-white">
+                相談URLを開く
+              </a>
+            ) : null}
+            {!mypageConsultationSurface.showInlineChat && matchedBooking?.meetingUrl ? (
+              <p className="text-sm text-[#6f6a63]">
+                チャットと相談の開始・終了は、相談URLから行ってください。
+              </p>
             ) : null}
           </section>
         )}

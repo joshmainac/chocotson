@@ -17,10 +17,6 @@ import {
   selectStep,
 } from "@/lib/chocotson/booking";
 import { getStepGroups, getStepsInGroup } from "@/lib/chocotson/catalog";
-import {
-  endConsultation,
-  startConsultation,
-} from "@/lib/chocotson/consultation";
 import { getConsultationDurationMinutes, getLandingCopy } from "@/lib/chocotson/copy";
 import { getAvailableSlots } from "@/lib/chocotson/slots";
 import { ELDERLY_DEMO_USERS } from "@/lib/chocotson/demo-users";
@@ -44,7 +40,6 @@ import type {
   StepGroupId,
   TimeSlot,
 } from "@/lib/chocotson/types";
-import BookingChat from "./BookingChat";
 
 const GROUP_TONES: Record<StepGroupId, string> = {
   "1-30": "bg-[#f3e7de]",
@@ -273,7 +268,9 @@ export default function ElderlyBookingApp() {
                   <article key={booking.id}>
                     <div className="meeting-date"><b>{formatSlot(booking.slotStart)}</b><span>{booking.durationMinutes}分</span></div>
                     <div className="meeting-detail"><b>{booking.stepTitle}</b><span>{booking.studentUserName ? `${booking.studentUserName}さんとマッチング済み` : "学生の受付を待っています"}</span></div>
-                    {booking.meetingUrl ? <a href={booking.meetingUrl}>相談URLを開く →</a> : <span className="meeting-waiting">URL発行待ち</span>}
+                    {booking.meetingUrl ? (
+                      <a href={booking.meetingUrl}>相談URLを開く →</a>
+                    ) : null}
                   </article>
                 ))}
               </div>
@@ -549,38 +546,18 @@ export default function ElderlyBookingApp() {
             </p>
             {boardRecord && !boardRecord.claimed ? (
               <p className="max-w-md text-base text-[#5c574f]">
-                学生が受けたら、ここから相談を始められます。
+                学生が受けたら、相談URLから相談を始められます。
               </p>
             ) : null}
-            {boardRecord?.claimed && boardRecord.consultationStatus === "idle" ? (
+            {boardRecord?.meetingUrl ? (
               <>
-                {boardRecord.meetingUrl ? <a href={boardRecord.meetingUrl} className="meeting-url">発行された相談URLを開く →</a> : null}
-                <button
-                  type="button"
-                  className="mt-2 inline-flex items-center rounded-md bg-[#2b2b2b] px-8 py-4 text-lg text-white shadow-[4px_4px_0_0_#c4a35a]"
-                  onClick={() => startConsultation(confirmation.bookingId, "elderly")}
-                >
-                  相談を始める
-                </button>
+                <a href={boardRecord.meetingUrl} className="meeting-url">
+                  相談URLを開く →
+                </a>
+                <p className="max-w-md text-base text-[#5c574f]">
+                  チャットと相談の開始・終了は、相談URLから行ってください。
+                </p>
               </>
-            ) : null}
-            {boardRecord?.consultationStatus === "active" ? (
-              <>
-                <p className="text-lg text-[#5c574f]">相談中です</p>
-                <button
-                  type="button"
-                  className="mt-2 inline-flex items-center rounded-md bg-[#2b2b2b] px-8 py-4 text-lg text-white shadow-[4px_4px_0_0_#c4a35a]"
-                  onClick={() => endConsultation(confirmation.bookingId, "elderly")}
-                >
-                  終わりました
-                </button>
-              </>
-            ) : null}
-            {boardRecord?.consultationStatus === "ended" ? (
-              <p className="text-lg text-[#5c574f]">相談が終わりました</p>
-            ) : null}
-            {boardRecord ? (
-              <BookingChat bookingId={confirmation.bookingId} party="elderly" />
             ) : null}
           </section>
         ) : null}
