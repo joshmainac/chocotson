@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
 import BookingChat from "@/components/BookingChat";
-import StepFeedbackPicker from "@/components/StepFeedbackPicker";
 import {
   getBoardRecord,
   getBoardSnapshot,
@@ -143,9 +142,6 @@ export default function MeetingDemo({ bookingId }: { bookingId: string }) {
             >
               {party === "student" ? "学生マイページへ戻る" : "高齢者マイページへ戻る"}
             </Link>
-          ) : null}
-          {view.showStepFeedback ? (
-            <StepFeedbackPicker bookingId={bookingId} />
           ) : null}
           {view.showChat ? (
             <BookingChat bookingId={bookingId} party={chatParty(party)} />
