@@ -49,10 +49,12 @@ export function getVisibleBookings(session: StudentSession): IncomingBooking[] {
 export function claimBooking(
   session: StudentSession,
   bookingId: string,
+  student?: { id: string; name: string },
+  selectedSlotStart?: Date,
 ): StudentSession {
   const booking = getVisibleBookings(session).find((item) => item.id === bookingId);
   if (booking) {
-    claimOnBoard(bookingId);
+    claimOnBoard(bookingId, student, selectedSlotStart);
     return {
       ...session,
       phase: "receipt",

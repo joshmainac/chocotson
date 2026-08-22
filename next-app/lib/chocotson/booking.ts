@@ -1,6 +1,7 @@
 import { publishConfirmedBooking } from "./board";
 import type {
   BookingSession,
+  BookingAvailability,
   Confirmation,
   Step,
   StepGroupId,
@@ -81,15 +82,24 @@ export function reselectGroup(
   };
 }
 
-export function confirmBooking(session: BookingSession): Confirmation {
+export function confirmBooking(
+  session: BookingSession,
+  elderlyUser?: { id: string; name: string },
+  availability?: BookingAvailability,
+): Confirmation {
   if (!session.selectedStep || !session.selectedSlot) {
     throw new Error("step and slot are required to confirm");
   }
   const published = publishConfirmedBooking({
     stepTitle: session.selectedStep.title,
+    stepId: session.selectedStep.id,
     groupId: session.selectedStep.groupId,
     slotStart: session.selectedSlot.start,
     durationMinutes: session.selectedSlot.durationMinutes,
+    elderlyUserId: elderlyUser?.id,
+    elderlyUserName: elderlyUser?.name,
+    availabilityLabel: availability?.label,
+    candidateSlotStarts: availability?.candidateSlotStarts,
   });
   return {
     accepted: true,

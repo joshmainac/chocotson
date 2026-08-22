@@ -33,6 +33,12 @@ export type BookingSession = {
   requiresExplanation: boolean;
 };
 
+export type BookingAvailability = {
+  mode: "specific" | "range" | "all-day";
+  label: string;
+  candidateSlotStarts: Date[];
+};
+
 export type Confirmation = {
   accepted: boolean;
   bookingId: string;
@@ -58,6 +64,10 @@ export type IncomingBooking = {
   slotStart: Date;
   durationMinutes: number;
   taken: boolean;
+  elderlyUserId?: string | null;
+  elderlyUserName?: string | null;
+  availabilityLabel?: string | null;
+  candidateSlotStarts?: Date[];
 };
 
 export type StudentPhase = "groups" | "list" | "receipt";
