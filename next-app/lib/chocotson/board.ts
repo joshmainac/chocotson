@@ -8,6 +8,13 @@ import type {
 const STORAGE_KEY = "chocotson.booking-board";
 const BOARD_EVENT = "chocotson-board";
 
+export type BoardChatMessage = {
+  id: string;
+  bookingId: string;
+  sender: ConsultationParty;
+  body: string;
+};
+
 export type BoardRecord = {
   id: string;
   stepTitle: string;
@@ -27,6 +34,7 @@ export type BoardRecord = {
   endedBy: ConsultationParty | null;
   availabilityLabel: string | null;
   candidateSlotStarts: Date[];
+  messages: BoardChatMessage[];
 };
 
 let memory: BoardRecord[] = [];
@@ -54,7 +62,7 @@ function parse(raw: string | null): BoardRecord[] | null {
   }
   try {
     const rows = JSON.parse(raw) as Array<
-      Omit<BoardRecord, "slotStart"> & {
+      Omit<BoardRecord, "slotStart" | "messages"> & {
         slotStart: string;
         candidateSlotStarts?: string[];
         consultationStatus?: ConsultationStatus;
@@ -66,6 +74,7 @@ function parse(raw: string | null): BoardRecord[] | null {
         studentUserName?: string | null;
         meetingUrl?: string | null;
         stepId?: number | null;
+        messages?: BoardChatMessage[];
       }
     >;
     return rows.map((row) => ({
@@ -83,6 +92,7 @@ function parse(raw: string | null): BoardRecord[] | null {
       studentUserName: row.studentUserName ?? null,
       meetingUrl: row.meetingUrl ?? null,
       stepId: row.stepId ?? null,
+      messages: row.messages ?? [],
     }));
   } catch {
     return null;
@@ -151,9 +161,27 @@ export function publishConfirmedBooking(input: {
     candidateSlotStarts: input.candidateSlotStarts?.length
       ? input.candidateSlotStarts
       : [input.slotStart],
+    messages: [],
   };
   writeBoard([...readBoard(), record]);
   return record;
+}
+
+export function appendMessageOnBoard(
+  bookingId: string,
+  message: BoardChatMessage,
+): BoardRecord {
+  const current = readBoard();
+  const target = current.find((record) => record.id === bookingId);
+  if (!target) {
+    throw new Error("予約が見つかりません");
+  }
+  const next: BoardRecord = {
+    ...target,
+    messages: [...target.messages, message],
+  };
+  writeBoard(current.map((record) => (record.id === bookingId ? next : record)));
+  return next;
 }
 
 export function claimOnBoard(

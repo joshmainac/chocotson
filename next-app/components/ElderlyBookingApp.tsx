@@ -44,6 +44,7 @@ import type {
   StepGroupId,
   TimeSlot,
 } from "@/lib/chocotson/types";
+import BookingChat from "./BookingChat";
 
 const GROUP_TONES: Record<StepGroupId, string> = {
   "1-30": "bg-[#f3e7de]",
@@ -537,7 +538,7 @@ export default function ElderlyBookingApp() {
         ) : null}
 
         {confirmation ? (
-          <section className="flex flex-1 flex-col items-center justify-center gap-6 py-20 text-center">
+          <section className="flex flex-1 flex-col items-center gap-6 py-16 text-center">
             <p className="text-xs tracking-[0.28em] text-[#8a847c]">
               {copy.durationMinutesLabel.toUpperCase()}
             </p>
@@ -581,6 +582,9 @@ export default function ElderlyBookingApp() {
             ) : null}
             {boardRecord?.consultationStatus === "ended" ? (
               <p className="text-lg text-[#5c574f]">相談が終わりました</p>
+            ) : null}
+            {boardRecord ? (
+              <BookingChat bookingId={confirmation.bookingId} party="elderly" />
             ) : null}
           </section>
         ) : null}

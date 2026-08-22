@@ -30,6 +30,7 @@ import {
   selectTeachingGroups,
 } from "@/lib/chocotson/student";
 import type { StepGroupId, StudentSession } from "@/lib/chocotson/types";
+import BookingChat from "./BookingChat";
 
 const GROUP_TONES: Record<StepGroupId, string> = {
   "1-30": "bg-[#f3e7de]",
@@ -304,6 +305,9 @@ export default function StudentIntakeApp() {
             {consultation?.status === "active" ? <><p className="text-sm text-[#6f6a63]">相談中です。短い時間だけで大丈夫です。</p><button type="button" onClick={() => session.claimedBookingId && endConsultation(session.claimedBookingId, "student")} className="rounded-full bg-[#2b2b2b] px-8 py-3 text-sm text-white">終わりました</button></> : null}
             {consultation?.status === "ended" ? <p className="text-sm text-[#6f6a63]">相談が終わりました</p> : null}
             {consultation?.status === "idle" && session.claimedBookingId ? <button type="button" onClick={() => session.claimedBookingId && startConsultation(session.claimedBookingId, "student")} className="text-sm text-[#6f6a63] underline">この画面から相談を開始する</button> : null}
+            {session.claimedBookingId ? (
+              <BookingChat bookingId={session.claimedBookingId} party="student" />
+            ) : null}
           </section>
         )}
       </main>
