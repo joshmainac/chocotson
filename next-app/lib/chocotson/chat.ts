@@ -1,3 +1,7 @@
+import {
+  appendMessageOnBoard,
+  getBoardRecord,
+} from "./board";
 import type { ConsultationParty } from "./types";
 
 export type ChatMessage = {
@@ -16,16 +20,53 @@ export type ChatView = {
   hasNextScreen: false;
 };
 
-/** RED 用スキャフォールド。本体は後続コミットで埋める。 */
-export function getChat(_bookingId: string): ChatView {
-  throw new Error("not implemented");
+function requireRecord(bookingId: string) {
+  const record = getBoardRecord(bookingId);
+  if (!record) {
+    throw new Error("予約が見つかりません");
+  }
+  return record;
 }
 
-/** RED 用スキャフォールド。本体は後続コミットで埋める。 */
+function newMessageId(): string {
+  const random =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  return `msg-${random}`;
+}
+
+export function getChat(bookingId: string): ChatView {
+  const record = requireRecord(bookingId);
+  return {
+    bookingId: record.id,
+    stepTitle: record.stepTitle,
+    messages: [...record.messages],
+    hasMedia: false,
+    requiresAccount: false,
+    hasNextScreen: false,
+  };
+}
+
 export function sendMessage(
-  _bookingId: string,
-  _sender: ConsultationParty,
-  _body: string,
+  bookingId: string,
+  sender: ConsultationParty,
+  body: string,
 ): ChatMessage {
-  throw new Error("not implemented");
+  const record = requireRecord(bookingId);
+  const trimmed = body.trim();
+  if (trimmed.length === 0) {
+    throw new Error("空の本文は送れません");
+  }
+  if (sender === "student" && !record.claimed) {
+    throw new Error("まだ受けていない予約です");
+  }
+  const message: ChatMessage = {
+    id: newMessageId(),
+    bookingId: record.id,
+    sender,
+    body: trimmed,
+  };
+  appendMessageOnBoard(bookingId, message);
+  return message;
 }
