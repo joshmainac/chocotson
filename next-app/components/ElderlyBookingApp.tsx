@@ -322,10 +322,6 @@ export default function ElderlyBookingApp() {
             </article>
 
           </section>
-
-          <section className="elder-support-note">
-            <span>?</span><div><b>操作に迷ったときは</b><p>画面を閉じずに、近くのスタッフへお声がけください。</p></div>
-          </section>
         </main>
         {guideStep ? (
           <div className="lecture-guide-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setGuideStep(null); }}>
