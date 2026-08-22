@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { getChat, sendMessage } from "@/lib/chocotson/chat";
 import type { ConsultationParty } from "@/lib/chocotson/types";
+import StepFeedbackPicker from "./StepFeedbackPicker";
 
 type BookingChatProps = {
   bookingId: string;
@@ -26,6 +27,9 @@ export default function BookingChat({ bookingId, party }: BookingChatProps) {
 
   return (
     <div className="mt-10 w-full max-w-xl text-left">
+      {party === "elderly" ? (
+        <StepFeedbackPicker bookingId={bookingId} />
+      ) : null}
       <p className="text-xs tracking-[0.2em] text-[#8a847c]">やりとり</p>
       <p className="mt-1 text-sm text-[#6f6a63]">{chat.stepTitle}</p>
       <div className="mt-3 h-px w-full bg-[#e4dfd6]" />
